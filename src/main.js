@@ -1,5 +1,6 @@
-import request, { input } from "./js/pixabay-api.js";
-import createMarkup, { gallery } from "./js/render-functions.js";
+import { input } from './js/pixabay-api.js';
+import createMarkup, { gallery, clearGallery, renderGallery, showLoader, hideLoader } from './js/render-functions.js';
+import request  from './js/pixabay-api.js';
 
 import iziToast from "izitoast";
 import "izitoast/dist/css/iziToast.min.css";
@@ -9,22 +10,27 @@ import "simplelightbox/dist/simple-lightbox.min.css";
 
 const button = document.querySelector('.button')
 const form = document.querySelector('.form')
-const loader = document.querySelector('.loader')
-let lightbox = new SimpleLightbox('.pics a')
+export let lightbox = new SimpleLightbox('.gallery a')
 
 form.addEventListener('submit', handleSubmit)
 
 function handleSubmit(evt) {
     evt.preventDefault()
 
-    loader.style.display = 'block'
-
     const query = input.value.trim()
+
+    if (query === '') {
+        // iziToast.error({
+        //     message: 'Please enter a search query!',
+        // });
+        return; 
+    }
+
+    showLoader();
     
     request(query)
     .then((data) => {
-
-        gallery.innerHTML = ''
+        clearGallery();
 
         if (data.length === 0) {
             iziToast.error({
@@ -32,14 +38,17 @@ function handleSubmit(evt) {
             });
             return
         } 
-
-            gallery.insertAdjacentHTML('beforeend', createMarkup(data));
-            lightbox.refresh(); 
-
+        renderGallery(data);
     })
-    .catch((err) => console.error(err))
+    .catch((err) =>  { 
+        console.error(err)
+        iziToast.error({
+            message: 'Something went wrong. Please check your connection and try again.',
+        })
+    })
+
     .finally(() => {
-        loader.style.display = 'none'
+        hideLoader();
     })
 
     form.reset()

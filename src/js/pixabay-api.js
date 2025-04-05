@@ -1,5 +1,5 @@
 import axios from "axios"
-import createMarkup, { gallery } from './render-functions.js';
+import createMarkup, { gallery, clearGallery, renderGallery, showLoader, hideLoader } from './render-functions.js';
 
 export const input = document.querySelector('.input')
 

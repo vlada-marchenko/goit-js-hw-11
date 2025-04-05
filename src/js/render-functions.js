@@ -1,4 +1,7 @@
 export const gallery = document.querySelector('.gallery')
+import { lightbox } from "../main";
+
+const loader = document.querySelector('.loader')
 
 export default function createMarkup(arr) {
     return arr.map(({ webformatURL, largeImageURL, tags, likes, views, comments, downloads }) => 
@@ -18,4 +21,22 @@ export default function createMarkup(arr) {
     </li>
     `
     ).join(''); 
+}
+
+
+export function clearGallery() {
+  gallery.innerHTML = '';
+}
+
+export function renderGallery(images) {
+  gallery.insertAdjacentHTML('beforeend', createMarkup(images));
+  lightbox.refresh();
+}
+
+export function showLoader() {
+  loader.style.display = 'block';
+}
+
+export function hideLoader() {
+  loader.style.display = 'none';
 }
